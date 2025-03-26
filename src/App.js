@@ -2,6 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import "./App.css";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -17,7 +19,7 @@ function App() {
 
     try {
       // Replace 'YOUR_API_ENDPOINT' with your actual endpoint
-      const response = await axios.post("YOUR_API_ENDPOINT", {
+      const response = await axios.post(`${API_URL}/api/qa/`, {
         message: input,
       });
 
@@ -36,6 +38,11 @@ function App() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
+      {/* Header */}
+      <header className="bg-blue-500 text-white p-4 text-center text-xl font-semibold">
+        SP500 Analysis Chatbot
+      </header>
+
       {/* Messages container */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => (
