@@ -16,7 +16,7 @@ function App() {
     const userMessage = { text: input, sender: "user" };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
-
+    console.log(API_URL);
     try {
       // Replace 'YOUR_API_ENDPOINT' with your actual endpoint
       const response = await axios.post(`${API_URL}/api/qa/`, {
