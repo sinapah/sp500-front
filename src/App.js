@@ -20,11 +20,10 @@ function App() {
     try {
       // Replace 'YOUR_API_ENDPOINT' with your actual endpoint
       const response = await axios.post(`${API_URL}/api/qa/`, {
-        message: input,
+        question: input,
       });
-
       // Add bot response
-      const botMessage = { text: response.data.message, sender: "bot" };
+      const botMessage = { text: response.data.answer, sender: "bot" };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Error:", error);
