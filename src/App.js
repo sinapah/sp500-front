@@ -8,6 +8,7 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [questions, setQuestions] = useState([]);
+  const [useT5, setUseT5] = useState(false);
 
   useEffect(() => {
     // Fetch questions when component mounts
@@ -42,6 +43,7 @@ function App() {
       // Replace 'YOUR_API_ENDPOINT' with your actual endpoint
       const response = await axios.post(`${API_URL}/api/qa/`, {
         question: input,
+        mode: useT5 ? "T5" : "BERT",
       });
       // Add bot response
       const botMessage = { text: response.data.answer, sender: "bot" };
@@ -87,27 +89,42 @@ function App() {
 
       {/* Input form */}
       <form onSubmit={handleSubmit} className="p-4 bg-white border-t">
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Type your message..."
-          />
-          <button
-            type="button"
-            onClick={getRandomQuestion}
-            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
-          >
-            Random Question
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Send
-          </button>
+        <div className="flex flex-col space-y-2">
+          <div className="flex items-center space-x-2 mb-2">
+            <input
+              type="checkbox"
+              id="modelToggle"
+              checked={useT5}
+              onChange={(e) => setUseT5(e.target.checked)}
+              className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <label htmlFor="modelToggle" className="text-sm text-gray-700">
+              Use T5 Model (unchecked = BERT)
+            </label>
+          </div>
+
+          <div className="flex space-x-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Type your message..."
+            />
+            <button
+              type="button"
+              onClick={getRandomQuestion}
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            >
+              Random Question
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Send
+            </button>
+          </div>
         </div>
       </form>
     </div>
