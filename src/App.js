@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 
@@ -7,6 +7,27 @@ const API_URL = process.env.REACT_APP_API_URL;
 function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [questions, setQuestions] = useState([]);
+
+  useEffect(() => {
+    // Fetch questions when component mounts
+    fetch("/questions.txt")
+      .then((response) => response.text())
+      .then((text) => {
+        const questionsList = text
+          .split("\n")
+          .filter((line) => line.trim() !== "");
+        setQuestions(questionsList);
+      })
+      .catch((error) => console.error("Error loading questions:", error));
+  }, []);
+
+  const getRandomQuestion = () => {
+    if (questions.length > 0) {
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      setInput(questions[randomIndex]);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,6 +95,13 @@ function App() {
             className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Type your message..."
           />
+          <button
+            type="button"
+            onClick={getRandomQuestion}
+            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Random Question
+          </button>
           <button
             type="submit"
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
