@@ -9,6 +9,7 @@ function App() {
   const [input, setInput] = useState("");
   const [questions, setQuestions] = useState([]);
   const [useT5, setUseT5] = useState(false);
+  const [showSource, setShowSource] = useState(false);
 
   useEffect(() => {
     // Fetch questions when component mounts
@@ -44,9 +45,14 @@ function App() {
       const response = await axios.post(`${API_URL}/api/qa/`, {
         question: input,
         mode: useT5 ? "T5" : "BERT",
+        showSource: showSource,
       });
-      // Add bot response
-      const botMessage = { text: response.data.answer, sender: "bot" };
+      // Add bot response with source if available
+      const botMessage = {
+        text: response.data.answer,
+        sender: "bot",
+        source: response.data.source,
+      };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Error:", error);
@@ -74,14 +80,21 @@ function App() {
               message.sender === "user" ? "justify-end" : "justify-start"
             }`}
           >
-            <div
-              className={`max-w-[70%] rounded-lg p-3 ${
-                message.sender === "user"
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-gray-800"
-              }`}
-            >
-              {message.text}
+            <div className="max-w-[70%]">
+              {message.source && (
+                <div className="text-xs text-gray-500 mb-1 ml-3">
+                  Source: {message.source}
+                </div>
+              )}
+              <div
+                className={`rounded-lg p-3 ${
+                  message.sender === "user"
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-800"
+                }`}
+              >
+                {message.text}
+              </div>
             </div>
           </div>
         ))}
@@ -90,17 +103,31 @@ function App() {
       {/* Input form */}
       <form onSubmit={handleSubmit} className="p-4 bg-white border-t">
         <div className="flex flex-col space-y-2">
-          <div className="flex items-center space-x-2 mb-2">
-            <input
-              type="checkbox"
-              id="modelToggle"
-              checked={useT5}
-              onChange={(e) => setUseT5(e.target.checked)}
-              className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <label htmlFor="modelToggle" className="text-sm text-gray-700">
-              Use T5 Model (unchecked = BERT)
-            </label>
+          <div className="flex items-center space-x-4 mb-2">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="modelToggle"
+                checked={useT5}
+                onChange={(e) => setUseT5(e.target.checked)}
+                className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label htmlFor="modelToggle" className="text-sm text-gray-700">
+                Use T5 Model (unchecked = BERT)
+              </label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="sourceToggle"
+                checked={showSource}
+                onChange={(e) => setShowSource(e.target.checked)}
+                className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label htmlFor="sourceToggle" className="text-sm text-gray-700">
+                Show Source
+              </label>
+            </div>
           </div>
 
           <div className="flex space-x-2">
